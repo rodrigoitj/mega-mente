@@ -1,5 +1,5 @@
 const streamers = {
-  megamubot: ["ridrogoxd"],
+  megamubot: ["ridrogoxd", "srwins"],
 };
 
 module.exports = streamers;

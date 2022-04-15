@@ -22,24 +22,30 @@ client.on("message", onMessageHandler);
 client.on("connected", onConnectedHandler);
 client.connect();
 
-function getResponseFromAI(arg) {
-    const completion = await openai.createCompletion("text-davinci-002", {
-        prompt: generatePrompt(req.body.animal),
-        temperature: 0.6,
-    });
+async function getResponseFromAI(arg) {
+  const completion = await openai.createCompletion("text-davinci-002", {
+    prompt: generatePrompt(arg),
+    temperature: 0,
+    max_tokens: 100,
+  });
+  console.log(completion.data.choices);
+  return completion.data.choices[0].text.trim();
 }
 
 function generatePrompt(pergunta) {
-    return `No contexto de um MMORPG, ${pergunta}`;
+  //return `${pergunta}`.trim();
+  return `No contexto de um MMORPG, ${pergunta}`;
 }
 
-function onMessageHandler(target, context, msg, self) {
+async function onMessageHandler(target, context, msg, self) {
   if (self) {
     return;
   } // Ignore messages from the bot
-  const [commandName, arg1] = msg.trim().split(" ");
+  const fullMsg = msg.trim().split(" ");
+  const commandName = fullMsg[0];
+  const arg1 = fullMsg.slice(1).join(" ");
   if (commandName === "!megamente") {
-    var phrase = getResponseFromAI(arg1);
+    var phrase = await getResponseFromAI(arg1);
     if (phrase) {
       client.say(target, `${phrase}`);
     }
